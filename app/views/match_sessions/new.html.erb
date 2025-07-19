@@ -1,0 +1,11 @@
+<% content_for :title, "New match session" %>
+
+<h1>New match session</h1>
+
+<%= render "form", match_session: @match_session %>
+
+<br>
+
+<div>
+  <%= link_to "Back to match sessions", match_sessions_path %>
+</div>

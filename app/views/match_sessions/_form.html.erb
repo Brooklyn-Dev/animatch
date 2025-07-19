@@ -1,0 +1,42 @@
+<%= form_with(model: match_session) do |form| %>
+  <% if match_session.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(match_session.errors.count, "error") %> prohibited this match_session from being saved:</h2>
+
+      <ul>
+        <% match_session.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :username1, style: "display: block" %>
+    <%= form.text_field :username1 %>
+  </div>
+
+  <div>
+    <%= form.label :username2, style: "display: block" %>
+    <%= form.text_field :username2 %>
+  </div>
+
+  <div>
+    <%= form.label :edit_token, style: "display: block" %>
+    <%= form.text_field :edit_token %>
+  </div>
+
+  <div>
+    <%= form.label :shared_anime, style: "display: block" %>
+    <%= form.textarea :shared_anime %>
+  </div>
+
+  <div>
+    <%= form.label :recommendations, style: "display: block" %>
+    <%= form.textarea :recommendations %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,12 @@
+<% content_for :title, "Editing match session" %>
+
+<h1>Editing match session</h1>
+
+<%= render "form", match_session: @match_session %>
+
+<br>
+
+<div>
+  <%= link_to "Show this match session", @match_session %> |
+  <%= link_to "Back to match sessions", match_sessions_path %>
+</div>

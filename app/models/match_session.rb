@@ -1,0 +1,2 @@
+class MatchSession < ApplicationRecord
+end
