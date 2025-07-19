@@ -8,13 +8,13 @@
 
 <p>
   <strong>Public Link:</strong>
-  <% public_url = match_session_url(@match_session) %>
+  <% public_url = public_match_session_url(@match_session.public_token) %>
   <%= link_to public_url.sub(%r{^https?://}, ''), public_url, target: "_blank", rel: "noopener" %>
 </p>
 
 <p>
   <strong>Edit Link (keep this safe):</strong>
-  <% edit_url = edit_match_session_url(@match_session, edit_token: @match_session.edit_token) %>
+  <% edit_url = edit_match_session_url(@match_session.edit_token) %>
   <%= link_to edit_url.sub(%r{^https?://}, ''), edit_url, target: "_blank", rel: "noopener" %>
 </p>
 

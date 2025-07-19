@@ -1,4 +1,4 @@
-<% url = match_session.persisted? ? update_match_session_path(match_session, edit_token: match_session.edit_token) : nil %>
+<% url = match_session.persisted? ? update_match_session_path(match_session.edit_token) : create_match_session_path %>
 <% method = match_session.persisted? ? :patch : :post %>
 
 <%= form_with model: match_session, url: url, method: method do |form| %>

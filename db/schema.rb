@@ -10,11 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_19_004350) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_19_180929) do
   create_table "match_sessions", force: :cascade do |t|
     t.string "username1"
     t.string "username2"
+    t.string "public_token"
+    t.index ["public_token"], name: "index_match_sessions_on_public_token", unique: true
     t.string "edit_token"
+    t.index ["edit_token"], name: "index_match_sessions_on_edit_token", unique: true
     t.text "shared_anime"
     t.text "recommendations"
     t.datetime "created_at", null: false
