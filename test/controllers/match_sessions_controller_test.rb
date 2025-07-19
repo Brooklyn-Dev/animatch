@@ -30,7 +30,7 @@ class MatchSessionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update match_session" do
     patch update_match_session_url(@match_session.edit_token), params: { match_session: { username1: "updated_user" } }
-    assert_redirected_to public_match_session_url(@match_session.public_token)
+    assert_redirected_to edit_match_session_url(@match_session.edit_token)
   end
 
   test "should destroy match_session" do
