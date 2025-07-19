@@ -1,11 +1,6 @@
 class MatchSessionsController < ApplicationController
   before_action :set_match_session, only: %i[ show edit update destroy ]
 
-  # GET /match_sessions or /match_sessions.json
-  def index
-    @match_sessions = MatchSession.all
-  end
-
   # GET /match_sessions/1 or /match_sessions/1.json
   def show
   end
@@ -17,15 +12,23 @@ class MatchSessionsController < ApplicationController
 
   # GET /match_sessions/1/edit
   def edit
+    @match_session = MatchSession.find(params[:id])
+    unless params[:edit_token] == @match_session.edit_token
+      head :forbidden
+      return
+    end
   end
 
   # POST /match_sessions or /match_sessions.json
   def create
     @match_session = MatchSession.new(match_session_params)
 
+    # Get shared anime from Jikan API
+    # Generate recommendations using shared anime
+
     respond_to do |format|
       if @match_session.save
-        format.html { redirect_to @match_session, notice: "Match session was successfully created." }
+        format.html { redirect_to edit_match_session_path(@match_session.id, @match_session.edit_token), notice: "Match session was successfully created." }
         format.json { render :show, status: :created, location: @match_session }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -36,6 +39,14 @@ class MatchSessionsController < ApplicationController
 
   # PATCH/PUT /match_sessions/1 or /match_sessions/1.json
   def update
+    unless params[:edit_token] == @match_session.edit_token
+      head :forbidden
+      return
+    end
+
+    # Re-fetch shared anime
+    # Re-generate recommendations
+
     respond_to do |format|
       if @match_session.update(match_session_params)
         format.html { redirect_to @match_session, notice: "Match session was successfully updated." }
@@ -49,6 +60,11 @@ class MatchSessionsController < ApplicationController
 
   # DELETE /match_sessions/1 or /match_sessions/1.json
   def destroy
+    unless params[:edit_token] == @match_session.edit_token
+      head :forbidden
+      return
+    end
+
     @match_session.destroy!
 
     respond_to do |format|
@@ -65,6 +81,6 @@ class MatchSessionsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def match_session_params
-      params.expect(match_session: [ :username1, :username2, :edit_token, :shared_anime, :recommendations ])
+      params.expect(match_session: [ :username1, :username2 ])
     end
 end
