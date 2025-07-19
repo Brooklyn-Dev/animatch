@@ -1,5 +1,9 @@
 <% content_for :title, "New match session" %>
 
+<% if notice.present? %>
+  <p style="color: green"><%= notice %></p>
+<% end %>
+
 <h1>New match session</h1>
 
 <%= render "form", match_session: @match_session %>

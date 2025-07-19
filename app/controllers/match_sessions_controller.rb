@@ -1,6 +1,6 @@
 class MatchSessionsController < ApplicationController
-  before_action :set_match_session_by_edit_token, only: [:edit, :update, :destroy]
-  before_action :set_match_session_by_public_token, only: [:show]
+  before_action :set_match_session_by_edit_token, only: [ :edit, :update, :destroy ]
+  before_action :set_match_session_by_public_token, only: [ :show ]
 
   def show
   end
@@ -35,7 +35,7 @@ class MatchSessionsController < ApplicationController
 
     respond_to do |format|
       if @match_session.update(match_session_params)
-        format.html { redirect_to public_match_session_path(@match_session.public_token), notice: "Match session was successfully updated." }
+        format.html { redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully updated." }
         format.json { render :show, status: :ok, location: @match_session }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -48,7 +48,7 @@ class MatchSessionsController < ApplicationController
     @match_session.destroy
 
     respond_to do |format|
-      format.html { redirect_to new_match_sessions_path, status: :see_other, notice: "Match session was successfully destroyed." }
+      format.html { redirect_to new_match_session_path, status: :see_other, notice: "Match session was successfully destroyed." }
       format.json { head :no_content }
     end
   end

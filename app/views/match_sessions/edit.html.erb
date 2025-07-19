@@ -19,3 +19,5 @@
 </p>
 
 <%= render "form", match_session: @match_session %>
+
+<%= button_to "Delete Match Session", destroy_match_session_path(@match_session.edit_token), method: :delete %>

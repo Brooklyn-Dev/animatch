@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 
 class MatchSession < ApplicationRecord
     before_create :generate_unique_tokens
