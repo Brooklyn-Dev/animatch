@@ -15,11 +15,10 @@ class MatchSessionsController < ApplicationController
   def create
     @match_session = MatchSession.new(match_session_params)
 
-    # Get shared anime from Jikan API
-    # Generate recommendations using shared anime
-
     respond_to do |format|
       if @match_session.save
+        fetch_anime_and_generate_recommendations
+
         format.html { redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully created." }
         format.json { render :show, status: :created, location: @match_session }
       else
@@ -30,11 +29,10 @@ class MatchSessionsController < ApplicationController
   end
 
   def update
-    # Re-fetch shared anime
-    # Re-generate recommendations
-
     respond_to do |format|
       if @match_session.update(match_session_params)
+        fetch_anime_and_generate_recommendations
+
         format.html { redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully updated." }
         format.json { render :show, status: :ok, location: @match_session }
       else
@@ -64,5 +62,12 @@ class MatchSessionsController < ApplicationController
 
     def match_session_params
       params.expect(match_session: [ :username1, :username2 ])
+    end
+
+    def fetch_anime_and_generate_recommendations
+        user1_anime = AnilistService.get_user_completed_anime(@match_session.username1)
+        user2_anime = AnilistService.get_user_completed_anime(@match_session.username2)
+
+        # TODO: Generate recommendations using shared anime
     end
 end
