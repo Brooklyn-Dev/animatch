@@ -1,23 +1,33 @@
 <% content_for :title, "Editing match session" %>
 
 <% if notice.present? %>
-  <p style="color: green"><%= notice %></p>
+  <div class="bg-green-100 mb-6 px-4 py-3 border border-green-400 rounded text-green-700">
+    <%= notice %>
+  </div>
 <% end %>
 
-<h1>Editing match session</h1>
+<div class="mb-8 text-center">
+  <h1 class="mb-2 font-bold text-gray-800 text-3xl">Edit Match Session</h1>
+</div>
 
-<p>
-  <strong>Public Link:</strong>
-  <% public_url = public_match_session_url(@match_session.public_token) %>
-  <%= link_to public_url.sub(%r{^https?://}, ''), public_url, target: "_blank", rel: "noopener" %>
-</p>
+<div class="gap-6 grid md:grid-cols-2 mb-8">
+  <div class="bg-blue-50 p-4 rounded-lg">
+    <h3 class="mb-2 font-semibold text-gray-700">📋 Public Link</h3>
+    <p class="mb-2 text-gray-600 text-sm">Share this link with friends to view results:</p>
+    <% public_url = public_match_session_url(@match_session.public_token) %>
+    <%= link_to public_url.sub(%r{^https?://}, ''), public_url, 
+        target: "_blank", rel: "noopener",
+        class: "text-blue-600 hover:text-blue-800 underline break-all" %>
+  </div>
+  
+  <div class="bg-yellow-50 p-4 rounded-lg">
+    <h3 class="mb-2 font-semibold text-gray-700">✏️ Edit Link</h3>
+    <p class="mb-2 text-gray-600 text-sm">Keep this safe - only you should have this:</p>
+    <% edit_url = edit_match_session_url(@match_session.edit_token) %>
+    <%= link_to edit_url.sub(%r{^https?://}, ''), edit_url,
+        target: "_blank", rel: "noopener", 
+        class: "text-yellow-600 hover:text-yellow-800 underline break-all" %>
+  </div>
+</div>
 
-<p>
-  <strong>Edit Link (keep this safe):</strong>
-  <% edit_url = edit_match_session_url(@match_session.edit_token) %>
-  <%= link_to edit_url.sub(%r{^https?://}, ''), edit_url, target: "_blank", rel: "noopener" %>
-</p>
-
-<%= render "form", match_session: @match_session %>
-
-<%= button_to "Delete Match Session", destroy_match_session_path(@match_session.edit_token), method: :delete %>
+<%= render "form", match_session: @match_session, show_delete: true %>
