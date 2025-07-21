@@ -11,16 +11,19 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_07_19_180929) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "match_sessions", force: :cascade do |t|
     t.string "username1"
     t.string "username2"
     t.string "public_token"
-    t.index ["public_token"], name: "index_match_sessions_on_public_token", unique: true
     t.string "edit_token"
-    t.index ["edit_token"], name: "index_match_sessions_on_edit_token", unique: true
     t.text "shared_anime"
     t.text "recommendations"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["edit_token"], name: "index_match_sessions_on_edit_token", unique: true
+    t.index ["public_token"], name: "index_match_sessions_on_public_token", unique: true
   end
 end

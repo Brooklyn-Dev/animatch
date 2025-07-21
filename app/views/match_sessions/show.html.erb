@@ -16,33 +16,29 @@
 </div>
 
 <div class="gap-6 grid md:grid-cols-2 mb-8">
-  <% if @match_session.shared_anime.present? %>
     <div class="bg-green-50 p-4 rounded-lg">
       <h3 class="mb-2 font-semibold text-gray-700">🎥 Shared Anime</h3>
-      <div class="text-gray-600 text-sm">
-        <%= simple_format(@match_session.shared_anime) %>
-      </div>
+      
+      <% if @match_session.shared_anime.present? %>
+        <div class="text-gray-600 text-sm">
+          <%= simple_format(@match_session.shared_anime) %>
+        </div>
+      <% else %>   
+        <p class="text-gray-600 text-sm">No shared anime to display.</p>
+      <% end %>
     </div>
-  <% else %>
-    <div class="bg-green-50 p-4 rounded-lg">
-      <h3 class="mb-2 font-semibold text-gray-700">🎥 Shared Anime</h3>
-      <p class="text-gray-600 text-sm">No shared anime to display.</p>
-    </div>
-  <% end %>
 
-  <% if @match_session.recommendations.present? %>
     <div class="bg-yellow-50 p-4 rounded-lg">
       <h3 class="mb-2 font-semibold text-gray-700">✨ Recommendations</h3>
-      <div class="text-gray-600 text-sm">
-        <%= simple_format(@match_session.recommendations) %>
-      </div>
+
+      <% if @match_session.recommendations.present? %>
+        <div class="text-gray-600 text-sm">
+          <%= simple_format(@match_session.recommendations) %>
+        </div>
+      <% else %>
+        <p class="text-gray-600 text-sm">No recommendations to display.</p>
+      <% end %>
     </div>
-  <% else %>
-    <div class="bg-yellow-50 p-4 rounded-lg">
-      <h3 class="mb-2 font-semibold text-gray-700">✨ Recommendations</h3>
-      <p class="text-gray-600 text-sm">No recommendations to display.</p>
-    </div>
-  <% end %>
 </div>
 
 <div class="text-center">
