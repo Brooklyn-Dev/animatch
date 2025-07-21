@@ -137,6 +137,28 @@ class AnilistService
     variables = { ids: ids }
 
     result = make_request(query, variables)
+    return [] unless result && result["data"]
+
     result.dig("data", "Page", "media") || []
+  end
+
+  def self.user_exists?(username)
+    query = <<~GRAPHQL
+      query ($name: String) {
+        User(name: $name) {
+          id
+        }
+      }
+    GRAPHQL
+
+    variables = { name: username }
+
+    result = make_request(query, variables)
+    false unless result.is_a?(Hash)
+
+    result.dig("data", "User").present?
+  rescue => e
+    Rails.logger.error("AniList user check failed for #{username}: #{e.message}")
+    false
   end
 end

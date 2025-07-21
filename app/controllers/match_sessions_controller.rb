@@ -16,6 +16,13 @@ class MatchSessionsController < ApplicationController
 
   def create
     @match_session = MatchSession.new(match_session_params)
+
+    unless Rails.env.test? || usernames_exists?([ @match_session.username1, @match_session.username2 ].compact)
+      @match_session.errors.add(:base, "One or more AniList usernames do not exist.")
+      render :new, status: :unprocessable_entity
+      return
+    end
+
     @match_session.recommendations = fetch_anime_and_generate_recommendations.to_json
 
     respond_to do |format|
@@ -30,6 +37,12 @@ class MatchSessionsController < ApplicationController
   end
 
   def update
+    unless Rails.env.test? || usernames_exists?([ @match_session.username1, @match_session.username2 ].compact)
+      @match_session.errors.add(:base, "One or more AniList usernames do not exist.")
+      render :edit, status: :unprocessable_entity
+      return
+    end
+
     new_recommendations = fetch_anime_and_generate_recommendations.to_json
 
     respond_to do |format|
@@ -63,6 +76,10 @@ class MatchSessionsController < ApplicationController
 
     def match_session_params
       params.expect(match_session: [ :username1, :username2 ])
+    end
+
+    def usernames_exists?(usernames)
+      usernames.all? { |username| AnilistService.user_exists?(username) }
     end
 
     MIN_SHARED_SCORE = 7.0

@@ -31,4 +31,14 @@ class MatchSession < ApplicationRecord
                 self.edit_token = SecureRandom.urlsafe_base64(16)
             end while self.class.exists?(edit_token: edit_token)
         end
+
+        def validate_usernames
+          if username1.blank? || username2.blank?
+            errors.add(:base, "Please enter two AniList usernames.")
+          end
+
+          if username1.present? && username2.present? && username1.downcase == username2.downcase
+            errors.add(:base, "Usernames must be different.")
+          end
+        end
 end
