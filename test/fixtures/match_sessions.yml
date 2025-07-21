@@ -5,13 +5,13 @@ one:
   username2: MyString
   public_token: <%= SecureRandom.urlsafe_base64(12) %>
   edit_token: <%= SecureRandom.urlsafe_base64(16) %>
-  shared_anime: MyText
-  recommendations: MyText
+  shared_anime: '[ { "id": 1 } ]'
+  recommendations: '[ { "id": 1, "match_score": 100 } ]'
 
 two:
   username1: MyString
   username2: MyString
   public_token: <%= SecureRandom.urlsafe_base64(12) %>
   edit_token: <%= SecureRandom.urlsafe_base64(16) %>
-  shared_anime: MyText
-  recommendations: MyText
+  shared_anime: '[ { "id": 2 } ]'
+  recommendations: '[ { "id": 2, "match_score": 120 } ]'

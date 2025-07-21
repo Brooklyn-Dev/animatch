@@ -47,7 +47,7 @@ class MatchSessionsController < ApplicationController
     @match_session.destroy
 
     respond_to do |format|
-      format.html { redirect_to new_match_session_path, status: :see_other, notice: "Match session was successfully destroyed." }
+      format.html { redirect_to new_match_session_path, status: :see_other, notice: "Match session was successfully deleted." }
       format.json { head :no_content }
     end
   end

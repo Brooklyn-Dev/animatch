@@ -33,13 +33,53 @@
   <% end %>
   
   <div class="flex justify-center gap-4 mt-6">
-    <button type="submit" form="match-form" class="bg-blue-200 hover:bg-blue-300 shadow-sm px-5 py-2.5 rounded-lg min-w-[12rem] font-medium text-blue-900 text-base text-center transition-colors">
-      <%= match_session.persisted? ? "Update Match" : "Create Match" %>
+    <button id="submit-btn" type="submit" form="match-form" class="bg-blue-200 hover:bg-blue-300 shadow-sm px-5 py-2.5 rounded-lg min-w-[12rem] font-medium text-blue-900 text-base text-center transition-colors">
+      <span id="submit-btn-text"><%= match_session.persisted? ? "Update Match" : "Create Match" %></span>
     </button>
     
     <% if local_assigns[:show_delete] %>
-      <%= button_to "Delete Match", destroy_match_session_path(match_session.edit_token), method: :delete,
+      <%= button_to "Delete Match", destroy_match_session_path(match_session.edit_token), id: "delete-btn", method: :delete,
           class: "min-w-[12rem] text-center bg-red-200 hover:bg-red-300 text-red-900 px-5 py-2.5 rounded-lg font-medium text-base transition-colors shadow-sm" %>
     <% end %>
   </div>
 </div>
+
+<script>
+  document.addEventListener("turbo:load", () => {
+    const form = document.getElementById("match-form");
+    if (!form) return;
+
+    const submitBtn = document.getElementById("submit-btn");
+    const submitBtnText = document.getElementById("submit-btn-text");
+    const deleteBtn = document.getElementById("delete-btn")
+
+    function disableButton(button, newText=null) {
+      if (!button) return
+
+      button.disabled = true;
+      button.classList.add("opacity-50", "cursor-not-allowed");
+      if (newText !== null) {
+        button.textContent = newText;
+      }
+    }
+
+    if (submitBtn && submitBtnText) {
+      form.addEventListener("submit", () => {
+        setTimeout(() => disableButton(submitBtn), 0)
+        submitBtnText.textContent = "Processing..."
+        if (deleteBtn) {
+          disableButton(deleteBtn)
+        }
+      })
+    }
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", () => {
+        setTimeout(() => disableButton(deleteBtn, "Deleting..."), 0)
+        if (submitBtn) {
+          disableButton(submitBtn)
+        }
+      })
+    }
+  })
+</script>
