@@ -31,10 +31,14 @@
     <div class="bg-yellow-50 p-4 rounded-lg">
       <h3 class="mb-2 font-semibold text-gray-700">✨ Recommendations</h3>
 
-      <% if @match_session.recommendations.present? %>
-        <div class="text-gray-600 text-sm">
-          <%= simple_format(@match_session.recommendations) %>
-        </div>
+      <% if @recommendations_with_data.any? %>
+        <ol class="pl-5 text-gray-600 text-sm list-decimal">
+          <% @recommendations_with_data.each do |rec| %>
+            <li>
+              <%= link_to rec["title"]["english"] || rec["title"]["romaji"], "#{anilist_anime_url}/#{rec["id"]}", target: "_blank", class: "text-blue-600 hover:underline"%>
+            </li>
+          <% end %>
+        </ol>
       <% else %>
         <p class="text-gray-600 text-sm">No recommendations to display.</p>
       <% end %>

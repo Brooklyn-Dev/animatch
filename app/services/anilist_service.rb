@@ -52,11 +52,7 @@ class AnilistService
         }
         GRAPHQL
 
-      variables = {
-        username: username,
-        page: page,
-        perPage: per_page
-      }
+      variables = { username: username, page: page, perPage: per_page }
 
       result = make_request(query, variables)
       break unless result
@@ -65,14 +61,82 @@ class AnilistService
       break if media_list.empty?
 
       all_anime.concat(media_list)
-
-      page_info = result.dig("data", "Page", "pageInfo") || {}
-      break unless page_info["hasNextPage"]
+      break if !result.dig("data", "Page", "pageInfo", "hasNextPage")
 
       page += 1
       sleep(0.1)
     end
 
     all_anime
+  end
+
+  def self.get_top_anime(page = 1, per_page = 50, limit = 500)
+    all_anime = []
+
+    while all_anime.size < limit
+      query = <<~GRAPHQL
+        query ($page: Int, $perPage: Int) {
+          Page(page: $page, perPage: $perPage) {
+              pageInfo {
+                hasNextPage
+              }
+              media(type: ANIME, sort: [SCORE_DESC]) {
+                id
+                title {
+                  romaji
+                  english
+                }
+                coverImage {
+                  medium
+                }
+                genres
+                averageScore
+                popularity
+                episodes
+                format
+            }
+          }
+        }
+      GRAPHQL
+
+      variables = { page: page, perPage: per_page }
+
+      result = make_request(query, variables)
+      break unless result
+
+      media = result.dig("data", "Page", "media") || []
+      break if media.empty?
+
+      all_anime.concat(media)
+      break if !result.dig("data", "Page", "pageInfo", "hasNextPage")
+
+      page += 1
+      sleep(0.1)
+    end
+
+    all_anime.take(limit)
+  end
+
+  def self.get_anime_by_ids(ids)
+    return [] if ids.empty?
+
+    query = <<~GRAPHQL
+      query ($ids: [Int]) {
+        Page(perPage: #{ids.size}) {
+          media(id_in: $ids, type: ANIME) {
+            id
+            title {
+              romaji
+              english
+            }
+          }
+        }
+      }
+    GRAPHQL
+
+    variables = { ids: ids }
+
+    result = make_request(query, variables)
+    result.dig("data", "Page", "media") || []
   end
 end
