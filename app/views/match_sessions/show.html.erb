@@ -22,19 +22,7 @@
   </p>
 </div>
 
-<div class="gap-6 grid md:grid-cols-2 mb-8">
-    <div class="bg-green-50 p-4 rounded-lg">
-      <h3 class="mb-2 font-semibold text-gray-700">🎥 Shared Anime</h3>
-      
-      <% if @match_session.shared_anime.present? %>
-        <div class="text-gray-600 text-sm">
-          <%= simple_format(@match_session.shared_anime) %>
-        </div>
-      <% else %>   
-        <p class="text-gray-600 text-sm">No shared anime to display.</p>
-      <% end %>
-    </div>
-
+<div class="place-items-center grid mb-8">
     <div class="bg-yellow-50 p-4 rounded-lg">
       <h3 class="mb-2 font-semibold text-gray-700">✨ Recommendations</h3>
 
