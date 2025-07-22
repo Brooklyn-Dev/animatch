@@ -5,17 +5,17 @@ default: &default
 
 development:
   <<: *default
-  url: <%= ENV["DB_URL"] %>
+  url: <%= ENV["DATABASE_URL"] %>
   sslmode: require
 
 test:
   <<: *default
   database: animatch_test
   host: localhost
-  username: <%= ENV.fetch("DB_USERNAME", ENV["USER"]) %>
-  password: <%= ENV["DB_PASSWORD"] %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", ENV["USER"]) %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
 
 production:
   <<: *default
-  url: <%= ENV["DB_URL"] %>
+  url: <%= ENV["DATABASE_URL"] %>
   sslmode: require
