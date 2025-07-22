@@ -5,7 +5,7 @@ default: &default
 
 development:
   <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
+  url: <%= ENV["DB_URL"] %>
   sslmode: require
 
 test:
@@ -17,5 +17,5 @@ test:
 
 production:
   <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
+  url: <%= ENV["DB_URL"] %>
   sslmode: require
