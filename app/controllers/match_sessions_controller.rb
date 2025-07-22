@@ -3,8 +3,13 @@ class MatchSessionsController < ApplicationController
   before_action :set_match_session_by_public_token, only: [ :show ]
 
   def show
-    @match_session = MatchSession.find_by!(public_token: params[:public_token])
-    @recommendations_with_data = @match_session.fetch_recommendations_with_data
+    begin
+      @recommendations_with_data = @match_session.fetch_recommendations_with_data
+    rescue AnilistService::RateLimitError
+      flash.now[:alert] = "AniList API rate limit exceeded. Please try again later."
+      @recommendations_with_data = []
+      render :show, status: :too_many_requests
+    end
   end
 
   def new
@@ -17,42 +22,44 @@ class MatchSessionsController < ApplicationController
   def create
     @match_session = MatchSession.new(match_session_params)
 
-    unless Rails.env.test? || usernames_exists?([ @match_session.username1, @match_session.username2 ].compact)
-      @match_session.errors.add(:base, "One or more AniList usernames do not exist.")
-      render :new, status: :unprocessable_entity
-      return
+    begin
+      unless Rails.env.test? || usernames_exists?([ @match_session.username1, @match_session.username2 ].compact)
+        flash_usernames_error
+        render :new, status: :unprocessable_entity and return
+      end
+
+      @match_session.recommendations = fetch_anime_and_generate_recommendations.to_json
+    rescue AnilistService::RateLimitError => e
+      flash_rate_limit_error
+      render :new, status: :too_many_requests and return
     end
 
-    @match_session.recommendations = fetch_anime_and_generate_recommendations.to_json
-
-    respond_to do |format|
-      if @match_session.save
-        format.html { redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully created." }
-        format.json { render :show, status: :created, location: @match_session }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @match_session.errors, status: :unprocessable_entity }
-      end
+    if @match_session.save
+      redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully created."
+    else
+      flash.now[:alert] = @match_session.errors.full_messages.join(", ")
+      render :new, status: :unprocessable_entity
     end
   end
 
   def update
-    unless Rails.env.test? || usernames_exists?([ @match_session.username1, @match_session.username2 ].compact)
-      @match_session.errors.add(:base, "One or more AniList usernames do not exist.")
-      render :edit, status: :unprocessable_entity
-      return
+    begin
+      unless Rails.env.test? || usernames_exists?([ @match_session.username1, @match_session.username2 ].compact)
+        flash_usernames_error
+        redirect_to edit_match_session_path(@match_session.edit_token) and return
+      end
+
+      new_recommendations = fetch_anime_and_generate_recommendations.to_json
+    rescue AnilistService::RateLimitError => e
+      flash_rate_limit_error
+      redirect_to edit_match_session_path(@match_session.edit_token) and return
     end
 
-    new_recommendations = fetch_anime_and_generate_recommendations.to_json
-
-    respond_to do |format|
-      if @match_session.update(match_session_params.merge(recommendations: new_recommendations))
-        format.html { redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully updated." }
-        format.json { render :show, status: :ok, location: @match_session }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @match_session.errors, status: :unprocessable_entity }
-      end
+    if @match_session.update(match_session_params.merge(recommendations: new_recommendations))
+      redirect_to edit_match_session_path(@match_session.edit_token), notice: "Match session was successfully updated."
+    else
+      flash[:alert] = @match_session.errors.full_messages.join(", ")
+      redirect_to edit_match_session_path(@match_session.edit_token)
     end
   end
 
@@ -78,7 +85,19 @@ class MatchSessionsController < ApplicationController
       params.expect(match_session: [ :username1, :username2 ])
     end
 
+    def flash_usernames_error
+      flash[:alert] = "One or more AniList usernames do not exist."
+    end
+
+    def flash_rate_limit_error
+      flash[:alert] = "AniList API rate limit exceeded. Please try again later."
+    end
+
     def usernames_exists?(usernames)
+      return false if usernames.any?(&:blank?)
+      return false unless usernames.uniq.length == usernames.length
+
+      return true if Rails.env.test?
       usernames.all? { |username| AnilistService.user_exists?(username) }
     end
 

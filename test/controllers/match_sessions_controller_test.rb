@@ -12,7 +12,10 @@ class MatchSessionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create match_session" do
     assert_difference("MatchSession.count") do
-      post create_match_session_url, params: { match_session: { username1: @match_session.username1, username2: @match_session.username2 } }
+      post create_match_session_url, params: { match_session: { username1: @match_session.username1, username2: @match_session.username2 } },
+       headers: { "Accept" => "text/html" }
+
+      assert_response :redirect
     end
 
     assert_redirected_to edit_match_session_url(MatchSession.last.edit_token)

@@ -3,6 +3,8 @@ require "uri"
 require "json"
 
 class AnilistService
+  class RateLimitError < StandardError; end
+
   API_URL = "https://graphql.anilist.co/".freeze
 
   def self.make_request(query, variables = {})
@@ -20,8 +22,11 @@ class AnilistService
 
     response = http.request(request)
 
-    if response.code == "200"
+    case response.code.to_i
+    when 200
       JSON.parse(response.body)
+    when 429
+      raise RateLimitError, "AniList API rate limit exceeded"
     else
       Rails.logger.error "AniList API Error: #{response.code} - #{response.body}"
       nil
@@ -70,7 +75,7 @@ class AnilistService
     all_anime
   end
 
-  def self.get_top_anime(page = 1, per_page = 50, limit = 500)
+  def self.get_top_anime(page = 1, per_page = 50, limit = 200)
     all_anime = []
 
     while all_anime.size < limit
@@ -157,8 +162,5 @@ class AnilistService
     false unless result.is_a?(Hash)
 
     result.dig("data", "User").present?
-  rescue => e
-    Rails.logger.error("AniList user check failed for #{username}: #{e.message}")
-    false
   end
 end

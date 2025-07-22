@@ -2,7 +2,7 @@
 <% method = match_session.persisted? ? :patch : :post %>
 
 <div class="mx-auto mt-8 max-w-2xl">
-  <%= form_with model: match_session, url: url, method: method, id: "match-form" do |form| %>
+  <%= form_with model: match_session, url: url, method: method, id: "match-form", local: true, data: { turbo: false } do |form| %>
     <% if @match_session.errors.any? %>
       <div class="bg-red-100 mb-4 px-4 py-3 border border-red-400 rounded text-red-700">
         <h4 class="font-bold"><%= pluralize(@match_session.errors.count, "error") %> prohibited this match session from being saved:</h4>
@@ -13,17 +13,17 @@
         </ul>
       </div>
     <% end %>
-    
+        
     <div class="gap-6 grid md:grid-cols-2">
       <div>
         <%= form.label :username1, "First AniList username", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.text_field :username1, 
+        <%= form.text_field :username1, id: "username1-input",
           class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
           placeholder: "Enter a AniList username" %>
       </div>
       <div>
         <%= form.label :username2, "Second AniList username", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.text_field :username2,
+        <%= form.text_field :username2, id: "username2-input",
           class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
           placeholder: "Enter a AniList username" %>
       </div>
@@ -53,10 +53,12 @@
     const submitBtnText = document.getElementById("submit-btn-text");
     const deleteBtn = document.getElementById("delete-btn")
 
-    function disableButton(button, newText=null) {
-      if (!button) return
+    const username1Input = document.getElementById("username1-input");
+    const username2Input = document.getElementById("username2-input");
 
-      button.disabled = true;
+    function disableButton(button, newText=null) {
+      if (!button) return;
+
       button.classList.add("opacity-50", "cursor-not-allowed");
       if (newText !== null) {
         button.textContent = newText;
@@ -65,20 +67,26 @@
 
     if (submitBtn && submitBtnText) {
       form.addEventListener("submit", () => {
-        setTimeout(() => disableButton(submitBtn), 0)
+        disableButton(submitBtn);
         submitBtnText.textContent = "Processing..."
         if (deleteBtn) {
-          disableButton(deleteBtn)
+          disableButton(deleteBtn);
         }
+   
+        if (username1Input) username1Input.classList.add("opacity-50", "cursor-not-allowed");
+        if (username2Input) username2Input.classList.add("opacity-50", "cursor-not-allowed");
       })
     }
 
     if (deleteBtn) {
       deleteBtn.addEventListener("click", () => {
-        setTimeout(() => disableButton(deleteBtn, "Deleting..."), 0)
+        disableButton(deleteBtn, "Deleting...");
         if (submitBtn) {
-          disableButton(submitBtn)
+          disableButton(submitBtn);
         }
+   
+        if (username1Input) username1Input.classList.add("opacity-50", "cursor-not-allowed");
+        if (username2Input) username2Input.classList.add("opacity-50", "cursor-not-allowed");
       })
     }
   })
