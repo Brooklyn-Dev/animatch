@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root to: redirect("/new")
+
   get "/m/:public_token", to: "match_sessions#show", as: :public_match_session
   get "/e/:edit_token", to: "match_sessions#edit", as: :edit_match_session
   patch "/e/:edit_token", to: "match_sessions#update", as: :update_match_session
