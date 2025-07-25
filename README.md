@@ -1,24 +1,19 @@
-# README
+# AniMatch
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+![GitHub issues](https://img.shields.io/github/issues/Brooklyn-Dev/animatch)
 
-Things you may want to cover:
+Find the perfect anime to watch with friends!
 
-* Ruby version
+Made for HackClub's [Railway](https://railway.hackclub.com/) YSWS.
 
-* System dependencies
+<img src="screenshot.png" width="800" alt="AniMatch Edit Match Session page"/>
 
-* Configuration
+## How to use?
 
-* Database creation
+-   Enter 2 valid and distinct AniList usernames
+-   View recommendations of anime to watch together
+-   Edit/update or delete saved match session
 
-* Database initialization
+## Like this project?
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+If you find this project interesting or useful, consider giving it a star ⭐️!
